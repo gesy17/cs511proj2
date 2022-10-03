@@ -1,25 +1,20 @@
 #[global_allocator]
 static GLOBAL: jemallocator::Jemalloc = jemallocator::Jemalloc;
-
 extern crate wake;
 use polars::prelude::DataFrame;
 use std::env;
 use wake::graph::*;
-
 use tpch_polars::tpch::*;
 use tpch_polars::utils;
-
 fn main() {
     // Arguments:
     // 0: Whether to run query or test. Required. query/test.
     // 1: Query Number. Required.
     // 2: Scale of the TPC-H Dataset. Optional. Default: 1.
     // 3: Directory containing the dataset. Optional. Default: resources/tpc-h/data/scale=1/partition=1/
-
     env_logger::Builder::from_default_env()
         .format_timestamp_micros()
         .init();
-
     let args = env::args().skip(1).collect::<Vec<String>>();
     match args[0].as_str() {
         "query" => run_query(args.into_iter().skip(1).collect::<Vec<String>>()),
@@ -30,7 +25,6 @@ fn main() {
         ),
     }
 }
-
 fn run_query(args: Vec<String>) {
     if args.len() == 0 {
         panic!("Query not specified. Run like: cargo run --release --example tpch_polars -- q1")
@@ -42,16 +36,25 @@ fn run_query(args: Vec<String>) {
         *(&args[1].parse::<usize>().unwrap())
     };
     let data_directory = if args.len() <= 2 {
-        "resources/tpc-h/data/scale=1/partition=1"
+        "../../resources/tpc-h/data/scale=1/partition=10"
     } else {
         args[2].as_str()
     };
+
+    
+          
+            
+    
+
+          
+    
+    
+  
     let mut output_reader = NodeReader::empty();
     let mut query_service = get_query_service(query_no, scale, data_directory, &mut output_reader);
     log::info!("Running Query: {}", query_no);
     utils::run_query(&mut query_service, &mut output_reader);
 }
-
 pub fn get_query_service(
     query_no: &str,
     scale: usize,
